@@ -1,0 +1,37 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "1.0.0",
+  "FriendlyName": "PCGEx Tests",
+  "Description": "Automation tests for PCGExtendedToolkit.",
+  "Category": "PCG",
+  "CreatedBy": "Timothé Lapetite",
+  "CreatedByURL": "https://github.com/Nebukam/PCGExtendedToolkitTest",
+  "CanContainContent": false,
+  "EngineVersion": "5.7.0",
+  "IsBetaVersion": false,
+  "IsExperimentalVersion": false,
+  "Installed": false,
+  "Modules": [
+    {
+      "Name": "PCGExtendedToolkitTest",
+      "Type": "Editor",
+      "LoadingPhase": "Default",
+      "PlatformAllowList": [
+        "Win64",
+        "Mac",
+        "Linux"
+      ]
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "PCGExtendedToolkit",
+      "Enabled": true
+    },
+    {
+      "Name": "PCG",
+      "Enabled": true
+    }
+  ]
+}
