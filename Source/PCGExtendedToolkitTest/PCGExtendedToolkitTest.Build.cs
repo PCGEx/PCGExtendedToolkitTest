@@ -60,7 +60,8 @@ public class PCGExtendedToolkitTest : ModuleRules
 			PrivateDependencyModuleNames.AddRange(
 				new string[]
 				{
-					"UnrealEd"
+					"UnrealEd",
+					"PCGExElementsValencyEditor"
 				}
 			);
 		}
