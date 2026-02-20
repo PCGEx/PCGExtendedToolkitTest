@@ -50,7 +50,8 @@ public class PCGExtendedToolkitTest : ModuleRules
 				"PCGExGraphs",
 				"PCGExElementsClustersDiagrams",
 				"PCGExElementsSpatial",
-				"PCGExMatching"
+				"PCGExMatching",
+				"PCGExElementsValency"
 			}
 		);
 
