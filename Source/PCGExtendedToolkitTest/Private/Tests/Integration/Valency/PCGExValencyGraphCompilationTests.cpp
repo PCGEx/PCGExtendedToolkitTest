@@ -645,11 +645,14 @@ bool FPCGExValencyGraphCageChainAnyTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("3 entries"), Pattern.Entries.Num(), 3);
 	if (Pattern.Entries.Num() < 3) { return true; }
 
-	// Bidirectional check on authored data
+	// Cage graphs use UsesBidirectionalTypedPins()=true, which means
+	// only typed→typed pairs get auto-reversed. "Any" wires (where SourceName/TargetName
+	// are NAME_None) are intentionally one-directional — no reverse adjacencies.
 	TestTrue(TEXT("E0 → E1"), HasAdjacencyTo(Pattern.Entries[0], 1));
 	TestTrue(TEXT("E1 → E2"), HasAdjacencyTo(Pattern.Entries[1], 2));
-	TestTrue(TEXT("E1 → E0 (reverse)"), HasAdjacencyTo(Pattern.Entries[1], 0));
-	TestTrue(TEXT("E2 → E1 (reverse)"), HasAdjacencyTo(Pattern.Entries[2], 1));
+	// Any-wired cage entries do NOT get reverse adjacencies (by design)
+	TestFalse(TEXT("E1 → E0 (no reverse for Any)"), HasAdjacencyTo(Pattern.Entries[1], 0));
+	TestFalse(TEXT("E2 → E1 (no reverse for Any)"), HasAdjacencyTo(Pattern.Entries[2], 1));
 
 	// Manually compile and check orbital format
 	TArray<FText> Errors;
@@ -663,13 +666,11 @@ bool FPCGExValencyGraphCageChainAnyTest::RunTest(const FString& Parameters)
 	if (OutPatterns.HasPatterns())
 	{
 		const auto& CP = OutPatterns.Patterns[0];
-		// All entries should have adjacencies in orbital format too
-		for (int32 i = 0; i < CP.GetEntryCount(); ++i)
-		{
-			TestTrue(
-				*FString::Printf(TEXT("Orbital E%d has adjacency"), i),
-				CP.Entries[i].Adjacency.Num() > 0);
-		}
+		// E0 and E1 have forward adjacencies; E2 is a tail with no forward — only forward wires exist
+		TestTrue(TEXT("Orbital E0 has adjacency"), CP.Entries[0].Adjacency.Num() > 0);
+		TestTrue(TEXT("Orbital E1 has adjacency"), CP.Entries[1].Adjacency.Num() > 0);
+		// E2 is the chain tail with no outgoing Any wire and no reverse, so no adjacency
+		TestEqual(TEXT("Orbital E2 has no adjacency (tail, no reverse for Any)"), CP.Entries[2].Adjacency.Num(), 0);
 	}
 
 	return true;

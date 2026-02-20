@@ -14,6 +14,7 @@
 #include "Core/PCGExValencyOrbitalSet.h"
 #include "Core/PCGExBondingRules.h"
 #include "Core/PCGExCagePatternAsset.h"
+#include "Core/PCGExConnectorSet.h"
 #include "Data/Bitmasks/PCGExBitmaskCollection.h"
 
 namespace PCGExTest::ValencyHelpers
@@ -87,6 +88,26 @@ namespace PCGExTest::ValencyHelpers
 		UPCGExCagePatternAsset* Asset = NewObject<UPCGExCagePatternAsset>(GetTransientPackage());
 		Asset->OrbitalSet = InOrbitalSet;
 		return Asset;
+	}
+
+	/**
+	 * Create minimal UPCGExValencyConnectorSet with named connector types.
+	 * Each entry gets a unique TypeId (100+i) for editor compatibility.
+	 */
+	inline UPCGExValencyConnectorSet* CreateConnectorSet(const TArray<FName>& TypeNames)
+	{
+		UPCGExValencyConnectorSet* Set = NewObject<UPCGExValencyConnectorSet>(GetTransientPackage());
+		int32 NextTypeId = 100;
+		for (const FName& Name : TypeNames)
+		{
+			FPCGExValencyConnectorEntry Entry;
+			Entry.ConnectorType = Name;
+#if WITH_EDITORONLY_DATA
+			Entry.TypeId = NextTypeId++;
+#endif
+			Set->ConnectorTypes.Add(Entry);
+		}
+		return Set;
 	}
 
 	/**
