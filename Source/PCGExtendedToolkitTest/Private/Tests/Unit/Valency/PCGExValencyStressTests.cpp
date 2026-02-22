@@ -92,7 +92,7 @@ namespace
 }
 
 // =============================================================================
-// 64 Orbitals — Maximum orbital set with full compilation
+// 64 Orbitals -- Maximum orbital set with full compilation
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -175,7 +175,7 @@ bool FPCGExValencyStressFullyConnectedNeighborsTest::RunTest(const FString& Para
 }
 
 // =============================================================================
-// Many modules with transforms — 100 modules × 10 transforms each
+// Many modules with transforms -- 100 modules × 10 transforms each
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -225,7 +225,7 @@ bool FPCGExValencyStressManyTransformsTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// Assembler dedup under load — 200 additions, 50 unique modules
+// Assembler dedup under load -- 200 additions, 50 unique modules
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -252,7 +252,7 @@ bool FPCGExValencyStressAssemblerDedupTest::RunTest(const FString& Parameters)
 		FirstIndices.Add(Assembler.AddModule(Desc));
 	}
 
-	// Add duplicates — should return same index
+	// Add duplicates -- should return same index
 	int32 DedupCount = 0;
 	for (int32 i = 0; i < UniqueModules; ++i)
 	{
@@ -283,7 +283,7 @@ bool FPCGExValencyStressAssemblerDedupTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// Mixed placement policies — verify candidate lookup correctness at scale
+// Mixed placement policies -- verify candidate lookup correctness at scale
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -385,7 +385,7 @@ bool FPCGExValencyStressBoundaryWildcardTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// Tags at scale — 100 modules with many tags each
+// Tags at scale -- 100 modules with many tags each
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -419,7 +419,7 @@ bool FPCGExValencyStressManyTagsTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// EntryData — Pack/unpack correctness at volume
+// EntryData -- Pack/unpack correctness at volume
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -453,7 +453,7 @@ bool FPCGExValencyStressEntryDataVolumeTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// EntryData — Flag operations at volume
+// EntryData -- Flag operations at volume
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -503,7 +503,7 @@ bool FPCGExValencyStressEntryDataFlagsVolumeTest::RunTest(const FString& Paramet
 }
 
 // =============================================================================
-// EdgeOrbital — Pack/unpack correctness at volume
+// EdgeOrbital -- Pack/unpack correctness at volume
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -528,7 +528,7 @@ bool FPCGExValencyStressEdgePackVolumeTest::RunTest(const FString& Parameters)
 
 	TestEqual(TEXT("All orbital pack/unpack roundtrips succeeded"), Failures, 0);
 
-	// Connector pack — int32 range, packed into int64 via H64
+	// Connector pack -- int32 range, packed into int64 via H64
 	int32 ConnectorFailures = 0;
 	for (int32 Src = 0; Src < 1000; Src += 7)
 	{
@@ -546,7 +546,7 @@ bool FPCGExValencyStressEdgePackVolumeTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// Pattern Assets — Large two-store merge
+// Pattern Assets -- Large two-store merge
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -613,7 +613,7 @@ bool FPCGExValencyStressPatternMergeTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// Pattern Assets — Repeated clear + append cycles
+// Pattern Assets -- Repeated clear + append cycles
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -654,7 +654,7 @@ bool FPCGExValencyStressPatternClearAppendCyclesTest::RunTest(const FString& Par
 }
 
 // =============================================================================
-// Assembler — Interleaved unique + duplicate additions
+// Assembler -- Interleaved unique + duplicate additions
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -699,7 +699,7 @@ bool FPCGExValencyStressAssemblerInterleavedDedupTest::RunTest(const FString& Pa
 }
 
 // =============================================================================
-// BondingRules compile — all array sizes consistent for many modules
+// BondingRules compile -- all array sizes consistent for many modules
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -754,7 +754,7 @@ bool FPCGExValencyStressArrayConsistencyTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// MakeModuleKey — Determinism under volume (10K calls)
+// MakeModuleKey -- Determinism under volume (10K calls)
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -784,7 +784,7 @@ bool FPCGExValencyStressModuleKeyDeterminismTest::RunTest(const FString& Paramet
 }
 
 // =============================================================================
-// MakeModuleKey — Uniqueness under volume (1K distinct inputs)
+// MakeModuleKey -- Uniqueness under volume (1K distinct inputs)
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -810,7 +810,7 @@ bool FPCGExValencyStressModuleKeyUniquenessTest::RunTest(const FString& Paramete
 }
 
 // =============================================================================
-// Compile + BuildCandidateLookup — overlapping multi-bit masks
+// Compile + BuildCandidateLookup -- overlapping multi-bit masks
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -854,7 +854,7 @@ bool FPCGExValencyStressOverlappingMasksTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// Full pipeline — Assembler → Compile → BuildLookup → Pattern merge
+// Full pipeline -- Assembler → Compile → BuildLookup → Pattern merge
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(

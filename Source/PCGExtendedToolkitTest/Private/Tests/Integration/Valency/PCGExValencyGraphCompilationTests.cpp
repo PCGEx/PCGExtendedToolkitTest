@@ -185,7 +185,7 @@ namespace PCGExTest::GraphCompileHelpers
 }
 
 // #########################################################################
-//  CONNECTOR GRAPH — CHAIN TOPOLOGY
+//  CONNECTOR GRAPH -- CHAIN TOPOLOGY
 // #########################################################################
 
 // =============================================================================
@@ -253,7 +253,7 @@ bool FPCGExValencyGraphConnectorChainAnyTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// Root connected to MIDDLE entry — all entries still reachable via bidirectional adj
+// Root connected to MIDDLE entry -- all entries still reachable via bidirectional adj
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -319,7 +319,7 @@ bool FPCGExValencyGraphConnectorRootMiddleTest::RunTest(const FString& Parameter
 }
 
 // =============================================================================
-// Root connected to LAST entry — entries reachable only via reverse adjacencies
+// Root connected to LAST entry -- entries reachable only via reverse adjacencies
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -354,7 +354,7 @@ bool FPCGExValencyGraphConnectorRootLastTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("3 entries"), Pattern.Entries.Num(), 3);
 	if (Pattern.Entries.Num() < 3) { return true; }
 
-	// All entries must have adjacencies — this is the core regression test
+	// All entries must have adjacencies -- this is the core regression test
 	for (int32 i = 0; i < 3; ++i)
 	{
 		TestTrue(
@@ -366,7 +366,7 @@ bool FPCGExValencyGraphConnectorRootLastTest::RunTest(const FString& Parameters)
 }
 
 // #########################################################################
-//  CONNECTOR GRAPH — TYPED CONNECTIONS
+//  CONNECTOR GRAPH -- TYPED CONNECTIONS
 // #########################################################################
 
 // =============================================================================
@@ -431,11 +431,11 @@ bool FPCGExValencyGraphConnectorTypedSwapTest::RunTest(const FString& Parameters
 }
 
 // #########################################################################
-//  CONNECTOR GRAPH — STAR TOPOLOGY
+//  CONNECTOR GRAPH -- STAR TOPOLOGY
 // #########################################################################
 
 // =============================================================================
-// Star: center (root) + 3 leaves, all via "Any" — all bidirectional
+// Star: center (root) + 3 leaves, all via "Any" -- all bidirectional
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -488,11 +488,11 @@ bool FPCGExValencyGraphConnectorStarTest::RunTest(const FString& Parameters)
 }
 
 // #########################################################################
-//  CONNECTOR GRAPH — RING TOPOLOGY
+//  CONNECTOR GRAPH -- RING TOPOLOGY
 // #########################################################################
 
 // =============================================================================
-// 4-entry ring: E0→E1→E2→E3→E0, all via "Any" — all bidirectional
+// 4-entry ring: E0→E1→E2→E3→E0, all via "Any" -- all bidirectional
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -549,7 +549,7 @@ bool FPCGExValencyGraphConnectorRingTest::RunTest(const FString& Parameters)
 }
 
 // #########################################################################
-//  CONNECTOR GRAPH — DEDUPLICATION
+//  CONNECTOR GRAPH -- DEDUPLICATION
 // #########################################################################
 
 // =============================================================================
@@ -587,7 +587,7 @@ bool FPCGExValencyGraphConnectorNoDuplicatesTest::RunTest(const FString& Paramet
 	TestEqual(TEXT("2 entries"), Pattern.Entries.Num(), 2);
 	if (Pattern.Entries.Num() < 2) { return true; }
 
-	// Each entry should have exactly 1 adjacency (to the other) — no duplicates
+	// Each entry should have exactly 1 adjacency (to the other) -- no duplicates
 	TestEqual(TEXT("E0 has 1 adjacency"), Pattern.Entries[0].Adjacencies.Num(), 1);
 	TestEqual(TEXT("E1 has 1 adjacency"), Pattern.Entries[1].Adjacencies.Num(), 1);
 
@@ -605,7 +605,7 @@ bool FPCGExValencyGraphConnectorNoDuplicatesTest::RunTest(const FString& Paramet
 }
 
 // #########################################################################
-//  CAGE (ORBITAL) GRAPH — CHAIN TOPOLOGY
+//  CAGE (ORBITAL) GRAPH -- CHAIN TOPOLOGY
 // #########################################################################
 
 // =============================================================================
@@ -635,7 +635,7 @@ bool FPCGExValencyGraphCageChainAnyTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Wire E1→E2"), WireAny(E1, E2));
 
 	// CagePatternGraph::ShouldAutoCompile() returns false,
-	// so CompileGraphToAsset only writes Patterns[] — doesn't call Asset->Compile()
+	// so CompileGraphToAsset only writes Patterns[] -- doesn't call Asset->Compile()
 	Graph->CompileGraphToAsset();
 
 	TestEqual(TEXT("1 pattern authored"), Asset->Patterns.Num(), 1);
@@ -647,7 +647,7 @@ bool FPCGExValencyGraphCageChainAnyTest::RunTest(const FString& Parameters)
 
 	// Cage graphs use UsesBidirectionalTypedPins()=true, which means
 	// only typed→typed pairs get auto-reversed. "Any" wires (where SourceName/TargetName
-	// are NAME_None) are intentionally one-directional — no reverse adjacencies.
+	// are NAME_None) are intentionally one-directional -- no reverse adjacencies.
 	TestTrue(TEXT("E0 → E1"), HasAdjacencyTo(Pattern.Entries[0], 1));
 	TestTrue(TEXT("E1 → E2"), HasAdjacencyTo(Pattern.Entries[1], 2));
 	// Any-wired cage entries do NOT get reverse adjacencies (by design)
@@ -666,7 +666,7 @@ bool FPCGExValencyGraphCageChainAnyTest::RunTest(const FString& Parameters)
 	if (OutPatterns.HasPatterns())
 	{
 		const auto& CP = OutPatterns.Patterns[0];
-		// E0 and E1 have forward adjacencies; E2 is a tail with no forward — only forward wires exist
+		// E0 and E1 have forward adjacencies; E2 is a tail with no forward -- only forward wires exist
 		TestTrue(TEXT("Orbital E0 has adjacency"), CP.Entries[0].Adjacency.Num() > 0);
 		TestTrue(TEXT("Orbital E1 has adjacency"), CP.Entries[1].Adjacency.Num() > 0);
 		// E2 is the chain tail with no outgoing Any wire and no reverse, so no adjacency
@@ -728,7 +728,7 @@ bool FPCGExValencyGraphDisabledPatternTest::RunTest(const FString& Parameters)
 // #########################################################################
 
 // =============================================================================
-// Two separate patterns in same graph — each gets correct bidirectional adjacencies
+// Two separate patterns in same graph -- each gets correct bidirectional adjacencies
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(

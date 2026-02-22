@@ -4,7 +4,7 @@
 /**
  * PCGEx Valency Pattern Compile Unit Tests
  *
- * Tests UPCGExCagePatternAsset::Compile() — name→index resolution for orbital patterns.
+ * Tests UPCGExCagePatternAsset::Compile() -- name→index resolution for orbital patterns.
  * Creates authored patterns with named orbitals, compiles, and verifies the compiled output.
  *
  * Test naming convention: PCGEx.Unit.Valency.PatternCompile.<TestCase>
@@ -16,7 +16,7 @@
 #include "Helpers/PCGExValencyTestHelpers.h"
 
 // =============================================================================
-// Compile Empty — no authored patterns
+// Compile Empty -- no authored patterns
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -204,7 +204,7 @@ bool FPCGExValencyPatternCompileWildcardMaskTest::RunTest(const FString& Paramet
 }
 
 // =============================================================================
-// Compile Adjacency — SourceName/TargetName → orbital indices
+// Compile Adjacency -- SourceName/TargetName → orbital indices
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -454,7 +454,7 @@ bool FPCGExValencyPatternCompileEmptyEntryRejectedTest::RunTest(const FString& P
 
 	FPCGExPatternAuthored Pattern;
 	Pattern.PatternName = FName("EmptyPattern");
-	// No entries — this pattern should be rejected
+	// No entries -- this pattern should be rejected
 
 	Asset->Patterns.Add(Pattern);
 

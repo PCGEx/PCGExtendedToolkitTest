@@ -478,7 +478,7 @@ bool FPCGExConcurrentTaskLaunchTest::RunTest(const FString& Parameters)
 		F.Wait();
 	}
 
-	// Wait for completion callback — FRegistrationGuard ensures it fires only
+	// Wait for completion callback -- FRegistrationGuard ensures it fires only
 	// after all launcher threads finish registration and all tasks complete.
 	double StartTime = FPlatformTime::Seconds();
 	while (!AllComplete.load() && (FPlatformTime::Seconds() - StartTime) < 5.0)
@@ -720,7 +720,7 @@ bool FPCGExWorkDistributionTest::RunTest(const FString& Parameters)
 
 /**
  * Test that FRegistrationGuard suppresses premature completion.
- * All tasks complete while the guard is held — callback must NOT fire
+ * All tasks complete while the guard is held -- callback must NOT fire
  * until the guard destructs.
  */
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -762,11 +762,11 @@ bool FPCGExRegistrationGuardSuppressionTest::RunTest(const FString& Parameters)
 			FPlatformProcess::Sleep(0.01f);
 		}
 
-		// All tasks executed but guard is still held — completion MUST be suppressed
+		// All tasks executed but guard is still held -- completion MUST be suppressed
 		TestEqual(TEXT("All tasks executed while guard held"), ExecutedCount.load(), NumTasks);
 		TestFalse(TEXT("Completion suppressed while guard held"), AllComplete.load());
 	}
-	// Guard released here — CheckCompletion runs and fires callback
+	// Guard released here -- CheckCompletion runs and fires callback
 
 	// Brief wait for CheckCompletion to propagate
 	FPlatformProcess::Sleep(0.01f);

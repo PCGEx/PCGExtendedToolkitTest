@@ -77,7 +77,7 @@ bool FPCGExValencyEdgeOrbitalZeroTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// EdgeOrbital Max (254 — 255 is sentinel)
+// EdgeOrbital Max (254 -- 255 is sentinel)
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(

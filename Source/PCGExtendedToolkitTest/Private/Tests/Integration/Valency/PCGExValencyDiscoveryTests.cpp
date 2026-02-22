@@ -825,7 +825,7 @@ bool FPCGExDiscoveryAssemblerDeduplicationTest::RunTest(const FString& Parameter
 {
 	FPCGExBondingRulesAssembler Assembler;
 
-	// Add same module twice — should deduplicate
+	// Add same module twice -- should deduplicate
 	FPCGExAssemblerModuleDesc Desc;
 	Desc.OrbitalMask = (1LL << 0);
 	int32 First = Assembler.AddModule(Desc);

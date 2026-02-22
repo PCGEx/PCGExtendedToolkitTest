@@ -5,7 +5,7 @@
  * PCGEx Valency Adversarial Unit Tests
  *
  * Tests what happens when users provide garbage, out-of-range, null, contradictory,
- * or otherwise unexpected inputs. These should NOT crash — they should fail gracefully
+ * or otherwise unexpected inputs. These should NOT crash -- they should fail gracefully
  * with correct sentinel values, silently ignore, or produce deterministic results.
  *
  * Categories:
@@ -30,7 +30,7 @@
 using namespace PCGExValency;
 
 // =============================================================================
-// EntryData — Pack with zero BondingRulesMapId (collides with INVALID_ENTRY)
+// EntryData -- Pack with zero BondingRulesMapId (collides with INVALID_ENTRY)
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -41,14 +41,14 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 bool FPCGExValencyAdversarialEntryPackZeroIdTest::RunTest(const FString& Parameters)
 {
 	// Pack(0, 0, 0) produces the same value as INVALID_ENTRY (0).
-	// This is a known design decision — callers must avoid BondingRulesMapId=0 + ModuleIndex=0 + Flags=0.
+	// This is a known design decision -- callers must avoid BondingRulesMapId=0 + ModuleIndex=0 + Flags=0.
 	// Verify the behavior is at least deterministic.
 	const uint64 Hash = EntryData::Pack(0, 0, 0);
 
 	TestEqual(TEXT("Pack(0,0,0) equals INVALID_ENTRY"), Hash, EntryData::INVALID_ENTRY);
 	TestFalse(TEXT("Pack(0,0,0) is not valid"), EntryData::IsValid(Hash));
 
-	// Pack(0, 1, 0) should still be valid — only the exact zero sentinel is invalid
+	// Pack(0, 1, 0) should still be valid -- only the exact zero sentinel is invalid
 	const uint64 HashNonZero = EntryData::Pack(0, 1, 0);
 	TestTrue(TEXT("Pack(0,1,0) is valid"), EntryData::IsValid(HashNonZero));
 
@@ -56,7 +56,7 @@ bool FPCGExValencyAdversarialEntryPackZeroIdTest::RunTest(const FString& Paramet
 }
 
 // =============================================================================
-// EntryData — Pack with max uint16 module index
+// EntryData -- Pack with max uint16 module index
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -78,7 +78,7 @@ bool FPCGExValencyAdversarialEntryPackMaxModuleTest::RunTest(const FString& Para
 }
 
 // =============================================================================
-// EntryData — All flags set simultaneously
+// EntryData -- All flags set simultaneously
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -104,7 +104,7 @@ bool FPCGExValencyAdversarialEntryAllFlagsTest::RunTest(const FString& Parameter
 }
 
 // =============================================================================
-// EntryData — SetFlag then ClearFlag same flag = round trip
+// EntryData -- SetFlag then ClearFlag same flag = round trip
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -130,7 +130,7 @@ bool FPCGExValencyAdversarialEntrySetClearSameFlagTest::RunTest(const FString& P
 }
 
 // =============================================================================
-// EntryData — ClearFlag on flag that isn't set (no-op)
+// EntryData -- ClearFlag on flag that isn't set (no-op)
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -143,7 +143,7 @@ bool FPCGExValencyAdversarialEntryClearUnsetFlagTest::RunTest(const FString& Par
 	const uint64 Hash = EntryData::Pack(10, 5, EntryData::Flags::Consumed);
 	const uint64 Cleared = EntryData::ClearFlag(Hash, EntryData::Flags::Swapped);
 
-	// Swapped was never set — clearing it should be a no-op
+	// Swapped was never set -- clearing it should be a no-op
 	TestEqual(TEXT("Consumed flag still present"),
 		EntryData::GetPatternFlags(Cleared), EntryData::Flags::Consumed);
 	TestTrue(TEXT("Has Consumed"), EntryData::HasFlag(Cleared, EntryData::Flags::Consumed));
@@ -153,7 +153,7 @@ bool FPCGExValencyAdversarialEntryClearUnsetFlagTest::RunTest(const FString& Par
 }
 
 // =============================================================================
-// EntryData — SetFlag twice (idempotent)
+// EntryData -- SetFlag twice (idempotent)
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -174,7 +174,7 @@ bool FPCGExValencyAdversarialEntrySetFlagTwiceTest::RunTest(const FString& Param
 }
 
 // =============================================================================
-// EdgeOrbital — Asymmetric pack (start != end)
+// EdgeOrbital -- Asymmetric pack (start != end)
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -198,7 +198,7 @@ bool FPCGExValencyAdversarialEdgeOrbitalAsymmetricTest::RunTest(const FString& P
 }
 
 // =============================================================================
-// EdgeOrbital — Pack with sentinel value (0xFF) as data
+// EdgeOrbital -- Pack with sentinel value (0xFF) as data
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -209,11 +209,11 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 bool FPCGExValencyAdversarialEdgeOrbitalSentinelAsDataTest::RunTest(const FString& Parameters)
 {
 	// What if user has exactly 255 orbitals and tries to use index 255?
-	// 255 = 0xFF = NO_MATCH sentinel — these are indistinguishable
+	// 255 = 0xFF = NO_MATCH sentinel -- these are indistinguishable
 	const int64 Packed = EdgeOrbital::Pack(255, 255);
 	const int64 Sentinel = EdgeOrbital::NoMatchSentinel();
 
-	TestEqual(TEXT("Pack(255,255) IS the sentinel — by design"),
+	TestEqual(TEXT("Pack(255,255) IS the sentinel -- by design"),
 		Packed, Sentinel);
 	TestEqual(TEXT("Both extract as NO_MATCH start"),
 		EdgeOrbital::GetStartOrbital(Packed), EdgeOrbital::NO_MATCH);
@@ -224,7 +224,7 @@ bool FPCGExValencyAdversarialEdgeOrbitalSentinelAsDataTest::RunTest(const FStrin
 }
 
 // =============================================================================
-// EdgeConnector — Negative indices
+// EdgeConnector -- Negative indices
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -234,7 +234,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 
 bool FPCGExValencyAdversarialEdgeConnectorNegativeTest::RunTest(const FString& Parameters)
 {
-	// Negative indices should roundtrip — H64/H64A/H64B handle int32→uint32 reinterpretation
+	// Negative indices should roundtrip -- H64/H64A/H64B handle int32→uint32 reinterpretation
 	const int64 Packed = EdgeConnector::Pack(-1, -1);
 
 	TestEqual(TEXT("Negative source roundtrips"), EdgeConnector::GetSourceIndex(Packed), -1);
@@ -244,7 +244,7 @@ bool FPCGExValencyAdversarialEdgeConnectorNegativeTest::RunTest(const FString& P
 }
 
 // =============================================================================
-// EdgeConnector — Large indices
+// EdgeConnector -- Large indices
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -263,7 +263,7 @@ bool FPCGExValencyAdversarialEdgeConnectorLargeTest::RunTest(const FString& Para
 }
 
 // =============================================================================
-// MakeModuleKey — Empty asset path
+// MakeModuleKey -- Empty asset path
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -291,7 +291,7 @@ bool FPCGExValencyAdversarialModuleKeyEmptyPathTest::RunTest(const FString& Para
 }
 
 // =============================================================================
-// MakeModuleKey — Negative orbital mask
+// MakeModuleKey -- Negative orbital mask
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -314,7 +314,7 @@ bool FPCGExValencyAdversarialModuleKeyNegativeMaskTest::RunTest(const FString& P
 }
 
 // =============================================================================
-// MakeModuleKey — Material variant with empty overrides array vs nullptr
+// MakeModuleKey -- Material variant with empty overrides array vs nullptr
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -345,7 +345,7 @@ bool FPCGExValencyAdversarialModuleKeyEmptyVariantTest::RunTest(const FString& P
 }
 
 // =============================================================================
-// FValencyState — All slot state constants are unique
+// FValencyState -- All slot state constants are unique
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -373,7 +373,7 @@ bool FPCGExValencyAdversarialSlotStateUniquenessTest::RunTest(const FString& Par
 }
 
 // =============================================================================
-// FValencyState — PLACEHOLDER is not resolved
+// FValencyState -- PLACEHOLDER is not resolved
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -394,7 +394,7 @@ bool FPCGExValencyAdversarialStatePlaceholderTest::RunTest(const FString& Parame
 }
 
 // =============================================================================
-// FPCGExBoundsModifier — Zero scale collapses bounds
+// FPCGExBoundsModifier -- Zero scale collapses bounds
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -419,7 +419,7 @@ bool FPCGExValencyAdversarialBoundsModifierZeroScaleTest::RunTest(const FString&
 }
 
 // =============================================================================
-// FPCGExBoundsModifier — Negative scale flips bounds
+// FPCGExBoundsModifier -- Negative scale flips bounds
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -439,7 +439,7 @@ bool FPCGExValencyAdversarialBoundsModifierNegativeScaleTest::RunTest(const FStr
 	// Negative scale: Extent * (-1) = negative extent
 	// Box constructor doesn't auto-fix min/max ordering
 	// Center=0, Extent=(50*-1)=(-50) → Min = 0-(-50)=50, Max = 0+(-50)=-50
-	// This produces an inverted box — the box IS valid but inverted
+	// This produces an inverted box -- the box IS valid but inverted
 	TestTrue(TEXT("Negative scale produces inverted box (Min > Max)"),
 		Result.Min.X > Result.Max.X || FMath::IsNearlyEqual(Result.GetVolume(), 0.0, 0.01));
 
@@ -447,7 +447,7 @@ bool FPCGExValencyAdversarialBoundsModifierNegativeScaleTest::RunTest(const FStr
 }
 
 // =============================================================================
-// PatternMatch — ComputeCentroid with empty positions array
+// PatternMatch -- ComputeCentroid with empty positions array
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -464,7 +464,7 @@ bool FPCGExValencyAdversarialCentroidEmptyPositionsTest::RunTest(const FString& 
 	TArray<FVector> EmptyPositions;
 	TArray<int32> NodeToPointIndex = {0, 1, 2};
 
-	// Positions array empty — all indices out of range
+	// Positions array empty -- all indices out of range
 	const FVector Centroid = Match.ComputeCentroid(EmptyPositions, NodeToPointIndex);
 
 	// Should return ZeroVector since no valid points found
@@ -475,7 +475,7 @@ bool FPCGExValencyAdversarialCentroidEmptyPositionsTest::RunTest(const FString& 
 }
 
 // =============================================================================
-// PatternMatch — ComputeCentroid with all INDEX_NONE mappings
+// PatternMatch -- ComputeCentroid with all INDEX_NONE mappings
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -500,7 +500,7 @@ bool FPCGExValencyAdversarialCentroidAllInvalidMappingsTest::RunTest(const FStri
 }
 
 // =============================================================================
-// PatternMatch — ComputeCentroid with empty EntryToNode
+// PatternMatch -- ComputeCentroid with empty EntryToNode
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -525,7 +525,7 @@ bool FPCGExValencyAdversarialCentroidEmptyMatchTest::RunTest(const FString& Para
 }
 
 // =============================================================================
-// PatternMatch — TransformPatternToMatched with identity transforms
+// PatternMatch -- TransformPatternToMatched with identity transforms
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -550,7 +550,7 @@ bool FPCGExValencyAdversarialTransformIdentityTest::RunTest(const FString& Param
 }
 
 // =============================================================================
-// PatternMatch — ComputePatternRotationDelta with same transform
+// PatternMatch -- ComputePatternRotationDelta with same transform
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -578,7 +578,7 @@ bool FPCGExValencyAdversarialRotationDeltaSameTransformTest::RunTest(const FStri
 }
 
 // =============================================================================
-// PatternEntry — MatchesModule with negative index
+// PatternEntry -- MatchesModule with negative index
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -601,7 +601,7 @@ bool FPCGExValencyAdversarialEntryMatchesNegativeModuleTest::RunTest(const FStri
 }
 
 // =============================================================================
-// LayerConfig — Contradictory: Boundary AND Wildcard on same orbital
+// LayerConfig -- Contradictory: Boundary AND Wildcard on same orbital
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -615,11 +615,11 @@ bool FPCGExValencyAdversarialLayerConfigContradictoryTest::RunTest(const FString
 
 	// Set boundary on bit 0
 	Config.SetBoundaryOrbital(0);
-	// Now also set wildcard on bit 0 — this violates the invariant
+	// Now also set wildcard on bit 0 -- this violates the invariant
 	Config.SetWildcardOrbital(0);
 
 	// Both flags should now be set (no automatic exclusion)
-	TestTrue(TEXT("Both boundary and wildcard are set on bit 0 — CONTRADICTORY"),
+	TestTrue(TEXT("Both boundary and wildcard are set on bit 0 -- CONTRADICTORY"),
 		Config.IsBoundaryOrbital(0) && Config.IsWildcardOrbital(0));
 
 	// SetWildcardOrbital also sets OrbitalMask
@@ -629,7 +629,7 @@ bool FPCGExValencyAdversarialLayerConfigContradictoryTest::RunTest(const FString
 }
 
 // =============================================================================
-// LayerConfig — Orbital bit index at boundary of int64 (bit 63)
+// LayerConfig -- Orbital bit index at boundary of int64 (bit 63)
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -654,7 +654,7 @@ bool FPCGExValencyAdversarialLayerConfigBit63Test::RunTest(const FString& Parame
 }
 
 // =============================================================================
-// OrbitalSet — FindOrbitalIndexByName with NAME_None
+// OrbitalSet -- FindOrbitalIndexByName with NAME_None
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -674,7 +674,7 @@ bool FPCGExValencyAdversarialOrbitalSetNameNoneTest::RunTest(const FString& Para
 }
 
 // =============================================================================
-// OrbitalSet — Duplicate orbital names
+// OrbitalSet -- Duplicate orbital names
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -684,7 +684,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 
 bool FPCGExValencyAdversarialOrbitalSetDuplicateNamesTest::RunTest(const FString& Parameters)
 {
-	// Two orbitals with same name — FindOrbitalIndexByName returns first match
+	// Two orbitals with same name -- FindOrbitalIndexByName returns first match
 	UPCGExValencyOrbitalSet* OrbitalSet = PCGExTest::ValencyHelpers::CreateOrbitalSet(
 		{FName("N"), FName("N"), FName("S")});
 
@@ -696,7 +696,7 @@ bool FPCGExValencyAdversarialOrbitalSetDuplicateNamesTest::RunTest(const FString
 }
 
 // =============================================================================
-// Resolver — Zero-length direction input
+// Resolver -- Zero-length direction input
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -709,10 +709,10 @@ bool FPCGExValencyAdversarialResolverZeroDirectionTest::RunTest(const FString& P
 	const TArray<FVector> Dirs = {FVector::ForwardVector, FVector::RightVector};
 	PCGExValency::FOrbitalDirectionResolver Resolver = PCGExTest::ValencyHelpers::BuildResolver(Dirs, 22.5);
 
-	// Query with zero vector — GetSafeNormal returns zero
+	// Query with zero vector -- GetSafeNormal returns zero
 	const uint8 Idx = Resolver.FindMatchingOrbital(FVector::ZeroVector, false, FTransform::Identity);
 
-	// Should either return NO_ORBITAL_MATCH or some index — must not crash
+	// Should either return NO_ORBITAL_MATCH or some index -- must not crash
 	// Dot product of (0,0,0) with anything = 0, which is below typical threshold
 	TestTrue(TEXT("Zero direction does not crash (returns valid or NO_MATCH)"),
 		Idx == NO_ORBITAL_MATCH || Idx < Resolver.Num());
@@ -721,7 +721,7 @@ bool FPCGExValencyAdversarialResolverZeroDirectionTest::RunTest(const FString& P
 }
 
 // =============================================================================
-// Resolver — Opposite direction of all orbitals
+// Resolver -- Opposite direction of all orbitals
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -744,7 +744,7 @@ bool FPCGExValencyAdversarialResolverOppositeDirectionTest::RunTest(const FStrin
 }
 
 // =============================================================================
-// Assembler — Operations on non-existent module indices
+// Assembler -- Operations on non-existent module indices
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -775,7 +775,7 @@ bool FPCGExValencyAdversarialAssemblerBadIndexTest::RunTest(const FString& Param
 }
 
 // =============================================================================
-// Assembler — Self-referencing neighbor
+// Assembler -- Self-referencing neighbor
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -805,7 +805,7 @@ bool FPCGExValencyAdversarialAssemblerSelfNeighborTest::RunTest(const FString& P
 }
 
 // =============================================================================
-// Assembler — Duplicate neighbors in same call
+// Assembler -- Duplicate neighbors in same call
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -834,7 +834,7 @@ bool FPCGExValencyAdversarialAssemblerDuplicateNeighborsTest::RunTest(const FStr
 }
 
 // =============================================================================
-// Assembler — Apply to same rules twice
+// Assembler -- Apply to same rules twice
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -851,7 +851,7 @@ bool FPCGExValencyAdversarialAssemblerApplyTwiceTest::RunTest(const FString& Par
 	UPCGExValencyOrbitalSet* OrbitalSet = PCGExTest::ValencyHelpers::CreateOrbitalSet({FName("North")});
 	UPCGExValencyBondingRules* Rules = PCGExTest::ValencyHelpers::CreateBondingRules(OrbitalSet);
 
-	// Apply twice — second should replace first (bClearExisting=true default)
+	// Apply twice -- second should replace first (bClearExisting=true default)
 	Assembler.Apply(Rules);
 	const FPCGExAssemblerResult Result2 = Assembler.Apply(Rules);
 
@@ -863,7 +863,7 @@ bool FPCGExValencyAdversarialAssemblerApplyTwiceTest::RunTest(const FString& Par
 }
 
 // =============================================================================
-// Assembler — Apply with bClearExisting=false (append mode)
+// Assembler -- Apply with bClearExisting=false (append mode)
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -883,7 +883,7 @@ bool FPCGExValencyAdversarialAssemblerAppendApplyTest::RunTest(const FString& Pa
 	Assembler1.Apply(Rules, true);
 	TestEqual(TEXT("1 module after first apply"), Rules->GetModuleCount(), 1);
 
-	// Second apply with bClearExisting=false — should append
+	// Second apply with bClearExisting=false -- should append
 	FPCGExBondingRulesAssembler Assembler2;
 	Assembler2.AddModule(
 		TSoftObjectPtr<UObject>(FSoftObjectPath(TEXT("/Game/Test/B.B"))), 0b01);
@@ -896,7 +896,7 @@ bool FPCGExValencyAdversarialAssemblerAppendApplyTest::RunTest(const FString& Pa
 }
 
 // =============================================================================
-// Assembler — Empty neighbor list
+// Assembler -- Empty neighbor list
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -910,7 +910,7 @@ bool FPCGExValencyAdversarialAssemblerEmptyNeighborListTest::RunTest(const FStri
 	const int32 Idx = Assembler.AddModule(
 		TSoftObjectPtr<UObject>(FSoftObjectPath(TEXT("/Game/Test/A.A"))), 0b01);
 
-	// Empty neighbor list — should be legal
+	// Empty neighbor list -- should be legal
 	Assembler.AddNeighbors(Idx, FName("North"), {});
 
 	UPCGExValencyOrbitalSet* OrbitalSet = PCGExTest::ValencyHelpers::CreateOrbitalSet({FName("North")});
@@ -923,7 +923,7 @@ bool FPCGExValencyAdversarialAssemblerEmptyNeighborListTest::RunTest(const FStri
 }
 
 // =============================================================================
-// ModuleSettings — SetBehavior with None flag (no-op)
+// ModuleSettings -- SetBehavior with None flag (no-op)
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -945,7 +945,7 @@ bool FPCGExValencyAdversarialModuleSettingsSetNoneTest::RunTest(const FString& P
 }
 
 // =============================================================================
-// ModuleSettings — ClearBehavior with None flag (no-op)
+// ModuleSettings -- ClearBehavior with None flag (no-op)
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -970,7 +970,7 @@ bool FPCGExValencyAdversarialModuleSettingsClearNoneTest::RunTest(const FString&
 }
 
 // =============================================================================
-// PatternMatch — GetMatchedNodeCount with large arrays
+// PatternMatch -- GetMatchedNodeCount with large arrays
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -983,7 +983,7 @@ bool FPCGExValencyAdversarialMatchLargeEntryToNodeTest::RunTest(const FString& P
 	FPCGExValencyPatternMatch Match;
 	Match.PatternIndex = 0;
 
-	// 1000 entries — simulates a huge pattern
+	// 1000 entries -- simulates a huge pattern
 	Match.EntryToNode.SetNum(1000);
 	for (int32 i = 0; i < 1000; ++i)
 	{
@@ -998,7 +998,7 @@ bool FPCGExValencyAdversarialMatchLargeEntryToNodeTest::RunTest(const FString& P
 }
 
 // =============================================================================
-// PatternMatch — Negative PatternIndex
+// PatternMatch -- Negative PatternIndex
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -1018,7 +1018,7 @@ bool FPCGExValencyAdversarialMatchNegativePatternIndexTest::RunTest(const FStrin
 }
 
 // =============================================================================
-// OrbitalSet — IsValidIndex boundaries
+// OrbitalSet -- IsValidIndex boundaries
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(

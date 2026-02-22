@@ -18,7 +18,7 @@
 #include "Helpers/PCGExValencyTestHelpers.h"
 
 // =============================================================================
-// Pattern Compile — Invalid orbital name in boundary
+// Pattern Compile -- Invalid orbital name in boundary
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -53,7 +53,7 @@ bool FPCGExValencyAdversarialIntPatternInvalidBoundaryNameTest::RunTest(const FS
 }
 
 // =============================================================================
-// Pattern Compile — Invalid orbital name in wildcard
+// Pattern Compile -- Invalid orbital name in wildcard
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -86,7 +86,7 @@ bool FPCGExValencyAdversarialIntPatternInvalidWildcardNameTest::RunTest(const FS
 }
 
 // =============================================================================
-// Pattern Compile — Same name in both boundary AND wildcard
+// Pattern Compile -- Same name in both boundary AND wildcard
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -106,7 +106,7 @@ bool FPCGExValencyAdversarialIntPatternBoundaryWildcardOverlapTest::RunTest(cons
 	FPCGExPatternEntryAuthored Entry;
 	Entry.bIsActive = true;
 	Entry.BoundaryNames.Add(FName("N"));   // N must have NO neighbor
-	Entry.WildcardNames.Add(FName("N"));   // N must have ANY neighbor — contradiction!
+	Entry.WildcardNames.Add(FName("N"));   // N must have ANY neighbor -- contradiction!
 	Pattern.Entries.Add(Entry);
 
 	Asset->Patterns.Add(Pattern);
@@ -114,7 +114,7 @@ bool FPCGExValencyAdversarialIntPatternBoundaryWildcardOverlapTest::RunTest(cons
 	TArray<FText> Errors;
 	Asset->Compile(&Errors);
 
-	// Should detect the contradiction — at minimum not crash
+	// Should detect the contradiction -- at minimum not crash
 	// The Compile code checks for overlap and should report error
 	TestTrue(TEXT("Overlap detected (errors reported or pattern rejected)"),
 		Errors.Num() > 0 || true); // At minimum: no crash
@@ -123,7 +123,7 @@ bool FPCGExValencyAdversarialIntPatternBoundaryWildcardOverlapTest::RunTest(cons
 }
 
 // =============================================================================
-// Pattern Compile — Adjacency with out-of-range TargetEntryIndex
+// Pattern Compile -- Adjacency with out-of-range TargetEntryIndex
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -144,7 +144,7 @@ bool FPCGExValencyAdversarialIntPatternAdjacencyOutOfRangeTest::RunTest(const FS
 	Entry.bIsActive = true;
 
 	FPCGExPatternAdjacencyAuthored Adj;
-	Adj.TargetEntryIndex = 999; // Way out of range — only 1 entry
+	Adj.TargetEntryIndex = 999; // Way out of range -- only 1 entry
 	FPCGExPatternIndexPairAuthored Pair;
 	Pair.SourceName = FName("N");
 	Pair.TargetName = FName("S");
@@ -157,14 +157,14 @@ bool FPCGExValencyAdversarialIntPatternAdjacencyOutOfRangeTest::RunTest(const FS
 	TArray<FText> Errors;
 	Asset->Compile(&Errors);
 
-	// Should not crash — out-of-range target should be caught
+	// Should not crash -- out-of-range target should be caught
 	TestTrue(TEXT("Out-of-range adjacency target does not crash"), true);
 
 	return true;
 }
 
 // =============================================================================
-// Pattern Compile — Negative TargetEntryIndex
+// Pattern Compile -- Negative TargetEntryIndex
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -207,7 +207,7 @@ bool FPCGExValencyAdversarialIntPatternNegativeTargetEntryTest::RunTest(const FS
 }
 
 // =============================================================================
-// Pattern Compile — Self-referencing adjacency (entry 0 → entry 0)
+// Pattern Compile -- Self-referencing adjacency (entry 0 → entry 0)
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -241,14 +241,14 @@ bool FPCGExValencyAdversarialIntPatternSelfAdjacencyTest::RunTest(const FString&
 	TArray<FText> Errors;
 	Asset->Compile(&Errors);
 
-	// Self-adjacency might be valid (loop pattern) — must not crash
+	// Self-adjacency might be valid (loop pattern) -- must not crash
 	TestTrue(TEXT("Self-referencing adjacency does not crash"), true);
 
 	return true;
 }
 
 // =============================================================================
-// Pattern Compile — Adjacency with NAME_None orbital names
+// Pattern Compile -- Adjacency with NAME_None orbital names
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -294,7 +294,7 @@ bool FPCGExValencyAdversarialIntPatternAdjacencyNameNoneTest::RunTest(const FStr
 }
 
 // =============================================================================
-// CagePatternAsset — Double compile
+// CagePatternAsset -- Double compile
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -315,7 +315,7 @@ bool FPCGExValencyAdversarialIntDoubleCompileTest::RunTest(const FString& Parame
 	Pattern.Entries.Add(Entry);
 	Asset->Patterns.Add(Pattern);
 
-	// Compile twice — second should overwrite first
+	// Compile twice -- second should overwrite first
 	Asset->Compile();
 	Asset->Compile();
 
@@ -329,7 +329,7 @@ bool FPCGExValencyAdversarialIntDoubleCompileTest::RunTest(const FString& Parame
 }
 
 // =============================================================================
-// CagePatternAsset — Compile after adding builder patterns
+// CagePatternAsset -- Compile after adding builder patterns
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -352,7 +352,7 @@ bool FPCGExValencyAdversarialIntCompileAfterBuilderTest::RunTest(const FString& 
 	BuilderPattern.Entries.Add(BEntry);
 	Asset->AppendCompiledPattern(MoveTemp(BuilderPattern), true);
 
-	// Now add authored pattern and compile — builder patterns should NOT be affected
+	// Now add authored pattern and compile -- builder patterns should NOT be affected
 	FPCGExPatternAuthored AuthoredPattern;
 	AuthoredPattern.PatternName = FName("AuthoredAfter");
 	FPCGExPatternEntryAuthored AEntry;
@@ -375,7 +375,7 @@ bool FPCGExValencyAdversarialIntCompileAfterBuilderTest::RunTest(const FString& 
 }
 
 // =============================================================================
-// CagePatternAsset — Clear, then clear again (double-clear)
+// CagePatternAsset -- Clear, then clear again (double-clear)
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -407,7 +407,7 @@ bool FPCGExValencyAdversarialIntDoubleClearTest::RunTest(const FString& Paramete
 }
 
 // =============================================================================
-// CagePatternAsset — Append after clear (use-after-clear)
+// CagePatternAsset -- Append after clear (use-after-clear)
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -450,7 +450,7 @@ bool FPCGExValencyAdversarialIntAppendAfterClearTest::RunTest(const FString& Par
 }
 
 // =============================================================================
-// BondingRules — Compile with zero modules (no-op compile)
+// BondingRules -- Compile with zero modules (no-op compile)
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -464,7 +464,7 @@ bool FPCGExValencyAdversarialIntBondingRulesCompileEmptyTest::RunTest(const FStr
 		{FName("N"), FName("S")});
 	UPCGExValencyBondingRules* Rules = PCGExTest::ValencyHelpers::CreateBondingRules(OrbitalSet);
 
-	// No modules — direct compile
+	// No modules -- direct compile
 	const bool bResult = Rules->Compile();
 
 	// Empty rules should compile but IsCompiled() returns false (0 modules)
@@ -475,7 +475,7 @@ bool FPCGExValencyAdversarialIntBondingRulesCompileEmptyTest::RunTest(const FStr
 }
 
 // =============================================================================
-// BondingRules — Compile without OrbitalSet
+// BondingRules -- Compile without OrbitalSet
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -497,14 +497,14 @@ bool FPCGExValencyAdversarialIntBondingRulesNoOrbitalSetTest::RunTest(const FStr
 	// Compile should handle missing OrbitalSet gracefully
 	const bool bResult = Rules->Compile();
 
-	// May succeed or fail — but must NOT crash
+	// May succeed or fail -- but must NOT crash
 	TestTrue(TEXT("Compile without OrbitalSet does not crash"), true);
 
 	return true;
 }
 
 // =============================================================================
-// BondingRules — BuildCandidateLookup on empty compiled data
+// BondingRules -- BuildCandidateLookup on empty compiled data
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -516,7 +516,7 @@ bool FPCGExValencyAdversarialIntBuildCandidateLookupEmptyTest::RunTest(const FSt
 {
 	FPCGExValencyBondingRulesCompiled CompiledData;
 
-	// Empty compiled data — should not crash
+	// Empty compiled data -- should not crash
 	CompiledData.BuildCandidateLookup();
 
 	TestEqual(TEXT("Empty lookup table"), CompiledData.MaskToCandidates.Num(), 0);
@@ -525,7 +525,7 @@ bool FPCGExValencyAdversarialIntBuildCandidateLookupEmptyTest::RunTest(const FSt
 }
 
 // =============================================================================
-// BondingRules — Accessor functions with out-of-range module index
+// BondingRules -- Accessor functions with out-of-range module index
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -562,7 +562,7 @@ bool FPCGExValencyAdversarialIntCompiledDataAccessorsOOBTest::RunTest(const FStr
 }
 
 // =============================================================================
-// Layer — OrbitalAcceptsNeighbor with out-of-range indices
+// Layer -- OrbitalAcceptsNeighbor with out-of-range indices
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -574,7 +574,7 @@ bool FPCGExValencyAdversarialIntLayerOOBTest::RunTest(const FString& Parameters)
 {
 	FPCGExValencyLayerCompiled Layer;
 	Layer.OrbitalCount = 2;
-	// Empty arrays — all indices are out of range
+	// Empty arrays -- all indices are out of range
 
 	TestFalse(TEXT("OOB module -1"), Layer.OrbitalAcceptsNeighbor(-1, 0, 0));
 	TestFalse(TEXT("OOB module 999"), Layer.OrbitalAcceptsNeighbor(999, 0, 0));
@@ -585,7 +585,7 @@ bool FPCGExValencyAdversarialIntLayerOOBTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// Assembler — AddModule with default desc (all zeros/empty)
+// Assembler -- AddModule with default desc (all zeros/empty)
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -597,11 +597,11 @@ bool FPCGExValencyAdversarialIntAssemblerDefaultDescTest::RunTest(const FString&
 {
 	FPCGExBondingRulesAssembler Assembler;
 
-	// Completely default desc — null asset, zero mask, default settings
+	// Completely default desc -- null asset, zero mask, default settings
 	FPCGExAssemblerModuleDesc DefaultDesc;
 	const int32 Idx = Assembler.AddModule(DefaultDesc);
 
-	// Should succeed — modules with null assets are legal (metadata-only modules)
+	// Should succeed -- modules with null assets are legal (metadata-only modules)
 	TestEqual(TEXT("Default desc adds at index 0"), Idx, 0);
 	TestEqual(TEXT("Module count is 1"), Assembler.GetModuleCount(), 1);
 
@@ -614,7 +614,7 @@ bool FPCGExValencyAdversarialIntAssemblerDefaultDescTest::RunTest(const FString&
 }
 
 // =============================================================================
-// BondingRules — IsModuleExcluded/Filler/Normal on empty compiled data
+// BondingRules -- IsModuleExcluded/Filler/Normal on empty compiled data
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -630,7 +630,7 @@ bool FPCGExValencyAdversarialIntPolicyCheckEmptyTest::RunTest(const FString& Par
 	TestFalse(TEXT("IsModuleExcluded(0) on empty"), CompiledData.IsModuleExcluded(0));
 	TestFalse(TEXT("IsModuleFiller(0) on empty"), CompiledData.IsModuleFiller(0));
 	TestTrue(TEXT("IsModuleNormal(0) on empty"), CompiledData.IsModuleNormal(0));
-	// IsModuleNormal returns true when !IsValidIndex — by design (safe default)
+	// IsModuleNormal returns true when !IsValidIndex -- by design (safe default)
 
 	return true;
 }

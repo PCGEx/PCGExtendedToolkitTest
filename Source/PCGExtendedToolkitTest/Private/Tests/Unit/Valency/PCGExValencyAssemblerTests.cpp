@@ -54,7 +54,7 @@ bool FPCGExValencyAssemblerAddModuleReturnsIndexTest::RunTest(const FString& Par
 }
 
 // =============================================================================
-// AddModule Dedup — Same asset+mask returns existing index
+// AddModule Dedup -- Same asset+mask returns existing index
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -76,7 +76,7 @@ bool FPCGExValencyAssemblerAddModuleDedupTest::RunTest(const FString& Parameters
 }
 
 // =============================================================================
-// AddModule Material Variant Dedup — Different variant = different module
+// AddModule Material Variant Dedup -- Different variant = different module
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -88,13 +88,13 @@ bool FPCGExValencyAssemblerMaterialVariantDedupTest::RunTest(const FString& Para
 {
 	FPCGExBondingRulesAssembler Assembler;
 
-	// First module — no material variant
+	// First module -- no material variant
 	FPCGExAssemblerModuleDesc DescA;
 	DescA.Asset = SoftA();
 	DescA.OrbitalMask = 0b1111;
 	const int32 IdxA = Assembler.AddModule(DescA);
 
-	// Second module — same asset+mask but WITH material variant
+	// Second module -- same asset+mask but WITH material variant
 	FPCGExAssemblerModuleDesc DescB;
 	DescB.Asset = SoftA();
 	DescB.OrbitalMask = 0b1111;
@@ -127,7 +127,7 @@ bool FPCGExValencyAssemblerConvenienceAddModuleTest::RunTest(const FString& Para
 	// Add via convenience
 	const int32 IdxConv = Assembler.AddModule(SoftA(), 0b1010);
 
-	// Try to add same via desc — should dedup
+	// Try to add same via desc -- should dedup
 	FPCGExAssemblerModuleDesc Desc;
 	Desc.Asset = SoftA();
 	Desc.OrbitalMask = 0b1010;
@@ -388,7 +388,7 @@ bool FPCGExValencyAssemblerGetKeyToIndexMapTest::RunTest(const FString& Paramete
 }
 
 // =============================================================================
-// Validate — Empty
+// Validate -- Empty
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(

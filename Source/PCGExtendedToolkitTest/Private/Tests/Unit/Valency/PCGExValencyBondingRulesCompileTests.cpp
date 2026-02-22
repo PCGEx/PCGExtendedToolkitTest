@@ -39,7 +39,7 @@ namespace
 }
 
 // =============================================================================
-// Compile Empty — 0 modules
+// Compile Empty -- 0 modules
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -59,7 +59,7 @@ bool FPCGExValencyBondingRulesCompileEmptyTest::RunTest(const FString& Parameter
 }
 
 // =============================================================================
-// Compile Basic Module — 1 module with flattened arrays
+// Compile Basic Module -- 1 module with flattened arrays
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -260,7 +260,7 @@ bool FPCGExValencyBondingRulesModulePlacementPoliciesTest::RunTest(const FString
 }
 
 // =============================================================================
-// BuildCandidateLookup — MaskToCandidates
+// BuildCandidateLookup -- MaskToCandidates
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -343,7 +343,7 @@ bool FPCGExValencyBondingRulesExcludedNotInCandidatesTest::RunTest(const FString
 }
 
 // =============================================================================
-// Multi-module compile — all arrays correctly sized
+// Multi-module compile -- all arrays correctly sized
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(

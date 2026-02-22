@@ -16,7 +16,7 @@
 #include "Helpers/PCGExValencyTestHelpers.h"
 
 // =============================================================================
-// FindByName — Found
+// FindByName -- Found
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -38,7 +38,7 @@ bool FPCGExValencyOrbitalSetFindByNameFoundTest::RunTest(const FString& Paramete
 }
 
 // =============================================================================
-// FindByName — Not Found
+// FindByName -- Not Found
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -58,7 +58,7 @@ bool FPCGExValencyOrbitalSetFindByNameNotFoundTest::RunTest(const FString& Param
 }
 
 // =============================================================================
-// FindByName — Empty Set
+// FindByName -- Empty Set
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -98,7 +98,7 @@ bool FPCGExValencyOrbitalSetNumOrbitalsTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// Resolver — FindExact
+// Resolver -- FindExact
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -127,7 +127,7 @@ bool FPCGExValencyOrbitalSetResolverFindExactTest::RunTest(const FString& Parame
 }
 
 // =============================================================================
-// Resolver — Within Threshold
+// Resolver -- Within Threshold
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -138,7 +138,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 bool FPCGExValencyOrbitalSetResolverWithinThresholdTest::RunTest(const FString& Parameters)
 {
 	const TArray<FVector> Dirs = {FVector::ForwardVector, FVector::RightVector, FVector::UpVector};
-	// 22.5 degrees threshold — wide enough for slight deviation
+	// 22.5 degrees threshold -- wide enough for slight deviation
 	PCGExValency::FOrbitalDirectionResolver Resolver = PCGExTest::ValencyHelpers::BuildResolver(Dirs, 22.5);
 
 	// Slightly off-axis forward (5 degrees off)
@@ -151,7 +151,7 @@ bool FPCGExValencyOrbitalSetResolverWithinThresholdTest::RunTest(const FString& 
 }
 
 // =============================================================================
-// Resolver — Outside Threshold
+// Resolver -- Outside Threshold
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -165,7 +165,7 @@ bool FPCGExValencyOrbitalSetResolverOutsideThresholdTest::RunTest(const FString&
 	// Very tight threshold (5 degrees)
 	PCGExValency::FOrbitalDirectionResolver Resolver = PCGExTest::ValencyHelpers::BuildResolver(Dirs, 5.0);
 
-	// 45 degrees between Forward and Right — should NOT match either
+	// 45 degrees between Forward and Right -- should NOT match either
 	const FVector Between = (FVector::ForwardVector + FVector::RightVector).GetSafeNormal();
 	const uint8 Idx = Resolver.FindMatchingOrbital(Between, false, FTransform::Identity);
 
@@ -176,7 +176,7 @@ bool FPCGExValencyOrbitalSetResolverOutsideThresholdTest::RunTest(const FString&
 }
 
 // =============================================================================
-// Resolver — Empty
+// Resolver -- Empty
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(

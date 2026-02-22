@@ -166,7 +166,7 @@ bool FPCGExPaper6RotationUniqueAABBsTest::RunTest(const FString& Parameters)
 		const double RotatedVolume = RotatedSize.X * RotatedSize.Y * RotatedSize.Z;
 		PCGEX_TEST_NEARLY_EQUAL(RotatedVolume, OriginalVolume, 1.0, "Rotation preserves volume");
 
-		// Store raw (unsorted) rotated size — each orientation should produce a unique axis assignment
+		// Store raw (unsorted) rotated size -- each orientation should produce a unique axis assignment
 		Sizes.Add(RotatedSize);
 	}
 

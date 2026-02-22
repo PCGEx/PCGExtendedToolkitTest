@@ -5,7 +5,7 @@
  * Valency Test Helpers
  *
  * Factory functions for creating lightweight test UDataAssets in the transient package.
- * All inline/header-only — no .cpp needed.
+ * All inline/header-only -- no .cpp needed.
  */
 
 #pragma once

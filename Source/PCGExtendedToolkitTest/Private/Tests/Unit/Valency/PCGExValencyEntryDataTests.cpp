@@ -160,7 +160,7 @@ bool FPCGExValencyEntryDataHasFlagTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// SetPatternFlags — replaces all flags
+// SetPatternFlags -- replaces all flags
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(

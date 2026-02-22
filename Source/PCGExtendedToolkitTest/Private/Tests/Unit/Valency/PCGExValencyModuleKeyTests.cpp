@@ -15,7 +15,7 @@
 #include "Core/PCGExValencyCommon.h"
 
 // =============================================================================
-// Determinism — Same inputs produce same key
+// Determinism -- Same inputs produce same key
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -141,7 +141,7 @@ bool FPCGExValencyModuleKeyNullVariantVsEmptyTest::RunTest(const FString& Parame
 	const int64 Mask = 0b1111;
 
 	FPCGExValencyMaterialVariant EmptyVariant;
-	// No overrides — should behave same as nullptr
+	// No overrides -- should behave same as nullptr
 
 	const FString KeyNull = PCGExValency::MakeModuleKey(Path, Mask, nullptr);
 	const FString KeyEmpty = PCGExValency::MakeModuleKey(Path, Mask, &EmptyVariant);

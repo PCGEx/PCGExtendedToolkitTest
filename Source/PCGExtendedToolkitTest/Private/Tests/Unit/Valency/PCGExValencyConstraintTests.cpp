@@ -67,7 +67,7 @@ namespace
 // #########################################################################
 
 // =============================================================================
-// OrbitalAcceptsNeighbor — manually populated layer
+// OrbitalAcceptsNeighbor -- manually populated layer
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -119,7 +119,7 @@ bool FPCGExValencyLayerAcceptsNeighborTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// OrbitalAcceptsNeighbor — via assembler → compiled rules
+// OrbitalAcceptsNeighbor -- via assembler → compiled rules
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -293,7 +293,7 @@ bool FPCGExValencyFitnessCombinedTest::RunTest(const FString& Parameters)
 	// Node with orbitals 0,1,2 (3 connections)
 	const int64 NodeMask = 0b0111;
 
-	// Module that needs 0,1,2 — boundary on 3, wildcard on 0,1 → should pass
+	// Module that needs 0,1,2 -- boundary on 3, wildcard on 0,1 → should pass
 	TestTrue(TEXT("All constraints pass"),
 		DoesModuleFit(0b0111, 0b1000, 0b0011, NodeMask));
 
@@ -391,7 +391,7 @@ bool FPCGExValencyDistTrackerBasicTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// Distribution tracker — unlimited max (-1)
+// Distribution tracker -- unlimited max (-1)
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -435,7 +435,7 @@ bool FPCGExValencyDistTrackerUnlimitedTest::RunTest(const FString& Parameters)
 // #########################################################################
 
 // =============================================================================
-// MatchesModule — wildcard vs specific
+// MatchesModule -- wildcard vs specific
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -685,7 +685,7 @@ bool FPCGExValencySolveResultTest::RunTest(const FString& Parameters)
 }
 
 // #########################################################################
-//  COMPILED RULES — MIN/MAX SPAWN ARRAYS
+//  COMPILED RULES -- MIN/MAX SPAWN ARRAYS
 // #########################################################################
 
 // =============================================================================

@@ -160,7 +160,7 @@ namespace
 }
 
 // #########################################################################
-//  AUTHORED DATA — BIDIRECTIONAL ADJACENCY STRUCTURE
+//  AUTHORED DATA -- BIDIRECTIONAL ADJACENCY STRUCTURE
 // #########################################################################
 
 // =============================================================================
@@ -197,7 +197,7 @@ bool FPCGExValencyBiDirChainAuthoredTest::RunTest(const FString& Parameters)
 }
 
 // #########################################################################
-//  CONNECTOR PATTERN — BIDIRECTIONAL ADJACENCY COMPILATION
+//  CONNECTOR PATTERN -- BIDIRECTIONAL ADJACENCY COMPILATION
 // #########################################################################
 
 // =============================================================================
@@ -381,7 +381,7 @@ bool FPCGExValencyBiDirConnectorTypedSwapTest::RunTest(const FString& Parameters
 }
 
 // #########################################################################
-//  ORBITAL (CAGE) PATTERN — BIDIRECTIONAL ADJACENCY COMPILATION
+//  ORBITAL (CAGE) PATTERN -- BIDIRECTIONAL ADJACENCY COMPILATION
 // #########################################################################
 
 // =============================================================================
@@ -503,7 +503,7 @@ bool FPCGExValencyBiDirOrbitalChainTest::RunTest(const FString& Parameters)
 }
 
 // #########################################################################
-//  STAR TOPOLOGY — CENTER + LEAVES
+//  STAR TOPOLOGY -- CENTER + LEAVES
 // #########################################################################
 
 // =============================================================================
@@ -569,7 +569,7 @@ bool FPCGExValencyBiDirStarTopologyTest::RunTest(const FString& Parameters)
 }
 
 // #########################################################################
-//  DEDUPLICATION — NO DUPLICATE PAIRS
+//  DEDUPLICATION -- NO DUPLICATE PAIRS
 // #########################################################################
 
 // =============================================================================
@@ -626,7 +626,7 @@ bool FPCGExValencyBiDirNoDuplicatesTest::RunTest(const FString& Parameters)
 }
 
 // #########################################################################
-//  CONNECTOR COMPILATION — UNIDIRECTIONAL vs BIDIRECTIONAL COMPARISON
+//  CONNECTOR COMPILATION -- UNIDIRECTIONAL vs BIDIRECTIONAL COMPARISON
 // #########################################################################
 
 // =============================================================================
@@ -699,7 +699,7 @@ bool FPCGExValencyBiDirBidirectionalFixTest::RunTest(const FString& Parameters)
 }
 
 // #########################################################################
-//  ORBITAL COMPILATION — UNIDIRECTIONAL vs BIDIRECTIONAL
+//  ORBITAL COMPILATION -- UNIDIRECTIONAL vs BIDIRECTIONAL
 // #########################################################################
 
 // =============================================================================

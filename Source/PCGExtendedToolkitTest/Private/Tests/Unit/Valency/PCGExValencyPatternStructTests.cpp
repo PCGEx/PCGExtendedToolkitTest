@@ -21,7 +21,7 @@
 #include "Core/PCGExValencyCommon.h"
 
 // =============================================================================
-// Entry — MatchesModule with wildcard (empty ModuleIndices)
+// Entry -- MatchesModule with wildcard (empty ModuleIndices)
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -42,7 +42,7 @@ bool FPCGExValencyPatternEntryMatchesModuleWildcardTest::RunTest(const FString& 
 }
 
 // =============================================================================
-// Entry — MatchesModule with specific indices
+// Entry -- MatchesModule with specific indices
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -64,7 +64,7 @@ bool FPCGExValencyPatternEntryMatchesModuleSpecificTest::RunTest(const FString& 
 }
 
 // =============================================================================
-// Entry — IsWildcard
+// Entry -- IsWildcard
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -85,7 +85,7 @@ bool FPCGExValencyPatternEntryIsWildcardTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// PatternSet — HasPatterns
+// PatternSet -- HasPatterns
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -106,7 +106,7 @@ bool FPCGExValencyPatternSetHasPatternsTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// PatternSet — Exclusive/Additive indices
+// PatternSet -- Exclusive/Additive indices
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -129,7 +129,7 @@ bool FPCGExValencyPatternSetExclusiveAdditiveTest::RunTest(const FString& Parame
 }
 
 // =============================================================================
-// Pattern — IsValid
+// Pattern -- IsValid
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -150,7 +150,7 @@ bool FPCGExValencyPatternIsValidTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// Match — IsValid
+// Match -- IsValid
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -176,7 +176,7 @@ bool FPCGExValencyPatternMatchIsValidTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// Match — GetRootNodeIndex
+// Match -- GetRootNodeIndex
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -198,7 +198,7 @@ bool FPCGExValencyPatternMatchGetRootNodeIndexTest::RunTest(const FString& Param
 }
 
 // =============================================================================
-// Match — ComputeCentroid
+// Match -- ComputeCentroid
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -234,7 +234,7 @@ bool FPCGExValencyPatternMatchComputeCentroidTest::RunTest(const FString& Parame
 }
 
 // =============================================================================
-// Match — ComputePatternRotationDelta
+// Match -- ComputePatternRotationDelta
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -262,7 +262,7 @@ bool FPCGExValencyPatternMatchRotationDeltaTest::RunTest(const FString& Paramete
 }
 
 // =============================================================================
-// Match — TransformPatternToMatched
+// Match -- TransformPatternToMatched
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -292,7 +292,7 @@ bool FPCGExValencyPatternMatchTransformToMatchedTest::RunTest(const FString& Par
 }
 
 // =============================================================================
-// FValencyState — Defaults
+// FValencyState -- Defaults
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -311,7 +311,7 @@ bool FPCGExValencyStateDefaultsTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// FValencyState — IsResolved
+// FValencyState -- IsResolved
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -342,7 +342,7 @@ bool FPCGExValencyStateIsResolvedTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// FValencyState — IsBoundary
+// FValencyState -- IsBoundary
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -367,7 +367,7 @@ bool FPCGExValencyStateIsBoundaryTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// FValencyState — IsUnsolvable
+// FValencyState -- IsUnsolvable
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -392,7 +392,7 @@ bool FPCGExValencyStateIsUnsolvableTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// FPCGExBoundsModifier — Apply
+// FPCGExBoundsModifier -- Apply
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -425,7 +425,7 @@ bool FPCGExValencyBoundsModifierApplyTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// FPCGExBoundsModifier — IsDefault
+// FPCGExBoundsModifier -- IsDefault
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -450,7 +450,7 @@ bool FPCGExValencyBoundsModifierIsDefaultTest::RunTest(const FString& Parameters
 }
 
 // =============================================================================
-// FPCGExValencyModuleSettings — Behavior Flags
+// FPCGExValencyModuleSettings -- Behavior Flags
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(

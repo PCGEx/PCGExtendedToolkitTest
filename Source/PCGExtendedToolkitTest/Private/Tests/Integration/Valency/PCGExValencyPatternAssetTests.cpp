@@ -113,7 +113,7 @@ bool FPCGExValencyPatternAssetMergeTest::RunTest(const FString& Parameters)
 }
 
 // =============================================================================
-// Builder Append — Exclusive vs Additive
+// Builder Append -- Exclusive vs Additive
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
@@ -166,7 +166,7 @@ bool FPCGExValencyPatternAssetClearOnlyBuilderTest::RunTest(const FString& Param
 	TestFalse(TEXT("Builder store empty after clear"),
 		Asset->GetBuilderCagePatterns().HasPatterns());
 
-	// But authored should survive — verify via GetAsOrbitalPatterns
+	// But authored should survive -- verify via GetAsOrbitalPatterns
 	FPCGExValencyPatternSetCompiled Merged;
 	Asset->GetAsOrbitalPatterns(Merged);
 	TestTrue(TEXT("Authored patterns survive clear"), Merged.HasPatterns());
@@ -175,7 +175,7 @@ bool FPCGExValencyPatternAssetClearOnlyBuilderTest::RunTest(const FString& Param
 }
 
 // =============================================================================
-// IsCompiled — Either Store
+// IsCompiled -- Either Store
 // =============================================================================
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
