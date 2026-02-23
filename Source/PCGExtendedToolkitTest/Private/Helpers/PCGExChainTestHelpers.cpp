@@ -214,16 +214,44 @@ namespace PCGExTest
 					continue;
 				}
 
+				// For closed loops, extend the walk to include the wrap-around back to the seed.
+				// The Links array doesn't contain the seed node — the closure is implicit via bIsClosedLoop.
+				TArray<FLink> ExtendedLinks;
+				const TArray<FLink>& WalkLinks = [&]() -> const TArray<FLink>&
+				{
+					if (SourceChain->bIsClosedLoop)
+					{
+						ExtendedLinks = SourceChain->Links;
+						ExtendedLinks.Add(FLink(SourceChain->Seed.Node, SourceChain->Seed.Edge));
+						return ExtendedLinks;
+					}
+					return SourceChain->Links;
+				}();
+
 				// Walk through the chain and split at breakpoints
 				TArray<FLink> CurrentSegmentLinks;
-				CurrentSegmentLinks.Reserve(SourceChain->Links.Num());
+				CurrentSegmentLinks.Reserve(WalkLinks.Num());
 
 				int32 SegmentSeedNode = SourceChain->Seed.Node;
-				int32 SegmentSeedEdge = SourceChain->Seed.Edge;
 
-				for (int32 i = 0; i < SourceChain->Links.Num(); i++)
+				// For closed loops, Seed.Edge was overwritten with the closing edge during BuildChain.
+				// The first segment needs the original edge from seed to first link (Links[0].Edge).
+				int32 SegmentSeedEdge = (SourceChain->bIsClosedLoop && !SourceChain->Links.IsEmpty())
+				                        ? SourceChain->Links[0].Edge
+				                        : SourceChain->Seed.Edge;
+
+				const int32 OriginalSeedPI = Cluster->GetNodePointIndex(SourceChain->Seed.Node);
+				const bool bOriginalSeedIsBreakpoint = BreakpointsRef.IsValidIndex(OriginalSeedPI) && BreakpointsRef[OriginalSeedPI];
+				bool bSegmentStartIsBreakpoint = bOriginalSeedIsBreakpoint;
+
+				// For closed loops where the seed is NOT a breakpoint, merge the first and last
+				// emitted segments to rejoin the chain across the arbitrary seed split point.
+				const bool bNeedsMerge = SourceChain->bIsClosedLoop && !bOriginalSeedIsBreakpoint;
+				int32 FirstEmittedIndex = -1;
+
+				for (int32 i = 0; i < WalkLinks.Num(); i++)
 				{
-					const FLink& Link = SourceChain->Links[i];
+					const FLink& Link = WalkLinks[i];
 					const int32 NodePointIndex = Cluster->GetNodePointIndex(Link.Node);
 					const bool bIsBreakpoint = BreakpointsRef.IsValidIndex(NodePointIndex) && BreakpointsRef[NodePointIndex];
 
@@ -243,14 +271,17 @@ namespace PCGExTest
 						NewChain->bIsLeaf = (StartNode && StartNode->IsLeaf()) || (EndNode && EndNode->IsLeaf());
 
 						NewChain->FixUniqueHash();
+
+						if (FirstEmittedIndex == -1) { FirstEmittedIndex = OutChains.Num(); }
 						OutChains.Add(NewChain);
 
 						CurrentSegmentLinks.Reset();
-						CurrentSegmentLinks.Reserve(SourceChain->Links.Num() - i);
+						CurrentSegmentLinks.Reserve(WalkLinks.Num() - i);
 
 						// Start new segment from breakpoint node
 						SegmentSeedNode = Link.Node;
-						SegmentSeedEdge = (i + 1 < SourceChain->Links.Num()) ? SourceChain->Links[i + 1].Edge : Link.Edge;
+						SegmentSeedEdge = (i + 1 < WalkLinks.Num()) ? WalkLinks[i + 1].Edge : Link.Edge;
+						bSegmentStartIsBreakpoint = true;
 					}
 					else
 					{
@@ -261,22 +292,48 @@ namespace PCGExTest
 				// Emit final segment
 				if (!CurrentSegmentLinks.IsEmpty())
 				{
-					TSharedPtr<FTestChain> NewChain = MakeShared<FTestChain>(FLink(SegmentSeedNode, SegmentSeedEdge));
-					NewChain->Links = MoveTemp(CurrentSegmentLinks);
+					if (bNeedsMerge && FirstEmittedIndex >= 0)
+					{
+						// Merge last + first segments across the arbitrary seed node.
+						TSharedPtr<FTestChain>& FirstSeg = OutChains[FirstEmittedIndex];
+						CurrentSegmentLinks.Append(FirstSeg->Links);
 
-					// Check for closed loop
-					NewChain->bIsClosedLoop = SourceChain->bIsClosedLoop &&
-					                          SegmentSeedNode == SourceChain->Seed.Node;
+						TSharedPtr<FTestChain> MergedChain = MakeShared<FTestChain>(FLink(SegmentSeedNode, SegmentSeedEdge));
+						MergedChain->Links = MoveTemp(CurrentSegmentLinks);
+						MergedChain->bIsClosedLoop = false;
 
-					// Determine if this is a leaf chain (topology only)
-					const PCGExClusters::FNode* StartNode = Cluster->GetNode(SegmentSeedNode);
-					const PCGExClusters::FNode* EndNode = Cluster->GetNode(NewChain->Links.Last().Node);
-					NewChain->bIsLeaf = (StartNode && StartNode->IsLeaf()) || (EndNode && EndNode->IsLeaf());
+						const PCGExClusters::FNode* StartNode = Cluster->GetNode(SegmentSeedNode);
+						const PCGExClusters::FNode* EndNode = Cluster->GetNode(MergedChain->Links.Last().Node);
+						MergedChain->bIsLeaf = (StartNode && StartNode->IsLeaf()) || (EndNode && EndNode->IsLeaf());
 
-					if (NewChain->bIsClosedLoop) { NewChain->bIsLeaf = false; }
+						MergedChain->FixUniqueHash();
+						OutChains[FirstEmittedIndex] = MergedChain;
+					}
+					else if (bNeedsMerge)
+					{
+						// Closed loop with no breakpoints in any link — pass through unchanged
+						OutChains.Add(SourceChain);
+					}
+					else
+					{
+						TSharedPtr<FTestChain> NewChain = MakeShared<FTestChain>(FLink(SegmentSeedNode, SegmentSeedEdge));
+						NewChain->Links = MoveTemp(CurrentSegmentLinks);
 
-					NewChain->FixUniqueHash();
-					OutChains.Add(NewChain);
+						// Check for closed loop (only if source was a closed loop and no breakpoints hit)
+						NewChain->bIsClosedLoop = SourceChain->bIsClosedLoop &&
+						                          SegmentSeedNode == SourceChain->Seed.Node &&
+						                          !bSegmentStartIsBreakpoint;
+
+						// Determine if this is a leaf chain (topology only)
+						const PCGExClusters::FNode* StartNode = Cluster->GetNode(SegmentSeedNode);
+						const PCGExClusters::FNode* EndNode = Cluster->GetNode(NewChain->Links.Last().Node);
+						NewChain->bIsLeaf = (StartNode && StartNode->IsLeaf()) || (EndNode && EndNode->IsLeaf());
+
+						if (NewChain->bIsClosedLoop) { NewChain->bIsLeaf = false; }
+
+						NewChain->FixUniqueHash();
+						OutChains.Add(NewChain);
+					}
 				}
 			}
 

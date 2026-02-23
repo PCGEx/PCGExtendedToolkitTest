@@ -550,12 +550,64 @@ bool FPCGExChainTwoNodesClosedLoopTest::RunTest(const FString& Parameters)
 // Breakpoint on Closed Loop Tests
 //
 
+// Helper: Collect all node indices from a set of chains into a flat set
+static TSet<int32> CollectAllChainNodes(const TArray<TSharedPtr<PCGExTest::FTestChain>>& Chains)
+{
+	TSet<int32> AllNodes;
+	for (const TSharedPtr<PCGExTest::FTestChain>& Chain : Chains)
+	{
+		if (!Chain) { continue; }
+		TArray<int32> Indices;
+		Chain->GetNodeIndices(Indices);
+		for (const int32 Idx : Indices) { AllNodes.Add(Idx); }
+	}
+	return AllNodes;
+}
+
+// Helper: Collect all unique edge indices from chains
+static TSet<int32> CollectAllChainEdges(const TArray<TSharedPtr<PCGExTest::FTestChain>>& Chains)
+{
+	TSet<int32> AllEdges;
+	for (const TSharedPtr<PCGExTest::FTestChain>& Chain : Chains)
+	{
+		if (!Chain) { continue; }
+		if (Chain->SingleEdge != -1) { AllEdges.Add(Chain->SingleEdge); continue; }
+		for (const PCGExGraphs::FLink& Lk : Chain->Links) { AllEdges.Add(Lk.Edge); }
+	}
+	return AllEdges;
+}
+
+// Helper: Verify that all chain endpoints are at breakpoint nodes (or leaf/complex nodes)
+static bool AllEndpointsAtBreakpoints(
+	const TArray<TSharedPtr<PCGExTest::FTestChain>>& Chains,
+	const TSharedRef<PCGExTest::FTestCluster>& Cluster,
+	const TArray<int8>& Breakpoints)
+{
+	for (const TSharedPtr<PCGExTest::FTestChain>& Chain : Chains)
+	{
+		if (!Chain) { continue; }
+		TArray<int32> Indices;
+		Chain->GetNodeIndices(Indices);
+		if (Indices.IsEmpty()) { continue; }
+
+		// Check start and end node
+		for (const int32 NodeIdx : {Indices[0], Indices.Last()})
+		{
+			const PCGExClusters::FNode* Node = Cluster->GetNode(NodeIdx);
+			if (Node->IsLeaf() || Node->IsComplex()) { continue; } // Natural endpoints are fine
+			const int32 PointIdx = Node->PointIndex;
+			if (!Breakpoints.IsValidIndex(PointIdx) || !Breakpoints[PointIdx]) { return false; } // Binary node that isn't a breakpoint = bad
+		}
+	}
+	return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FPCGExChainBreakpointClosedLoopTest,
-	"PCGEx.Unit.Clusters.Chain.Breakpoint.ClosedLoop",
+	FPCGExChainBreakpointClosedLoopSingleTest,
+	"PCGEx.Unit.Clusters.Chain.Breakpoint.ClosedLoop.Single",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
 
-bool FPCGExChainBreakpointClosedLoopTest::RunTest(const FString& Parameters)
+bool FPCGExChainBreakpointClosedLoopSingleTest::RunTest(const FString& Parameters)
 {
 	using namespace PCGExTest;
 
@@ -566,29 +618,34 @@ bool FPCGExChainBreakpointClosedLoopTest::RunTest(const FString& Parameters)
 
 	TSharedPtr<TArray<int8>> Breakpoints = MakeShared<TArray<int8>>();
 	Breakpoints->Init(0, 6);
-	(*Breakpoints)[3] = 1; // Breakpoint at node 3
+	(*Breakpoints)[3] = 1;
 
 	TArray<TSharedPtr<FTestChain>> Chains;
 	const bool bBuilt = TestChainHelpers::BuildChains(Cluster, Chains, Breakpoints);
 
 	TestTrue(TEXT("Chains built successfully"), bBuilt);
 
-	// Breaking a closed loop at one point should produce one open chain
-	// (or two chains depending on how you count the split)
-	TestTrue(TEXT("At least 1 chain after breaking loop"), Chains.Num() >= 1);
+	// A single breakpoint on a closed loop produces exactly 1 open chain
+	// (the loop is "cut" at the breakpoint, both ends land on node 3)
+	TestEqual(TEXT("1 chain after single breakpoint"), Chains.Num(), 1);
+	TestEqual(TEXT("0 closed loops"), TestChainHelpers::CountClosedLoops(Chains), 0);
 
-	// After breaking, no chains should be closed loops
-	TestEqual(TEXT("0 closed loops after breakpoint"), TestChainHelpers::CountClosedLoops(Chains), 0);
+	// All 6 nodes must be covered
+	TSet<int32> CoveredNodes = CollectAllChainNodes(Chains);
+	TestEqual(TEXT("All 6 nodes covered"), CoveredNodes.Num(), 6);
+
+	// Endpoints must be at breakpoint node 3
+	TestTrue(TEXT("Endpoints at breakpoints"), AllEndpointsAtBreakpoints(Chains, Cluster, *Breakpoints));
 
 	return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
-	FPCGExChainBreakpointClosedLoopMultipleTest,
-	"PCGEx.Unit.Clusters.Chain.Breakpoint.ClosedLoopMultiple",
+	FPCGExChainBreakpointClosedLoopTwoTest,
+	"PCGEx.Unit.Clusters.Chain.Breakpoint.ClosedLoop.Two",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
 
-bool FPCGExChainBreakpointClosedLoopMultipleTest::RunTest(const FString& Parameters)
+bool FPCGExChainBreakpointClosedLoopTwoTest::RunTest(const FString& Parameters)
 {
 	using namespace PCGExTest;
 
@@ -606,10 +663,276 @@ bool FPCGExChainBreakpointClosedLoopMultipleTest::RunTest(const FString& Paramet
 	const bool bBuilt = TestChainHelpers::BuildChains(Cluster, Chains, Breakpoints);
 
 	TestTrue(TEXT("Chains built successfully"), bBuilt);
-
-	// Two breakpoints on a closed loop should create 2 separate chains
-	TestEqual(TEXT("2 chains after 2 breakpoints on loop"), Chains.Num(), 2);
+	TestEqual(TEXT("2 chains after 2 breakpoints"), Chains.Num(), 2);
 	TestEqual(TEXT("0 closed loops"), TestChainHelpers::CountClosedLoops(Chains), 0);
+
+	// All 8 nodes must be covered
+	TSet<int32> CoveredNodes = CollectAllChainNodes(Chains);
+	TestEqual(TEXT("All 8 nodes covered"), CoveredNodes.Num(), 8);
+
+	// All 8 edges must be covered
+	TSet<int32> CoveredEdges = CollectAllChainEdges(Chains);
+	TestEqual(TEXT("All 8 edges covered"), CoveredEdges.Num(), 8);
+
+	TestTrue(TEXT("Endpoints at breakpoints"), AllEndpointsAtBreakpoints(Chains, Cluster, *Breakpoints));
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FPCGExChainBreakpointClosedLoopAllSmallTest,
+	"PCGEx.Unit.Clusters.Chain.Breakpoint.ClosedLoop.AllSmall",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+
+bool FPCGExChainBreakpointClosedLoopAllSmallTest::RunTest(const FString& Parameters)
+{
+	using namespace PCGExTest;
+
+	// 4-node closed loop (square) with breakpoints at ALL nodes.
+	// This is the exact scenario that triggered the ZoneGraph bug.
+	TSharedRef<FTestCluster> Cluster = FClusterBuilder()
+		.WithClosedLoop(4)
+		.Build();
+
+	TSharedPtr<TArray<int8>> Breakpoints = MakeShared<TArray<int8>>();
+	Breakpoints->Init(0, 4);
+	(*Breakpoints)[0] = 1;
+	(*Breakpoints)[1] = 1;
+	(*Breakpoints)[2] = 1;
+	(*Breakpoints)[3] = 1;
+
+	TArray<TSharedPtr<FTestChain>> Chains;
+	const bool bBuilt = TestChainHelpers::BuildChains(Cluster, Chains, Breakpoints);
+
+	TestTrue(TEXT("Chains built successfully"), bBuilt);
+
+	// 4 breakpoints on a 4-node loop → exactly 4 single-edge chains
+	TestEqual(TEXT("4 chains"), Chains.Num(), 4);
+	TestEqual(TEXT("4 single-edge chains"), TestChainHelpers::CountSingleEdgeChains(Chains), 4);
+	TestEqual(TEXT("0 closed loops"), TestChainHelpers::CountClosedLoops(Chains), 0);
+
+	// All 4 nodes must be covered
+	TSet<int32> CoveredNodes = CollectAllChainNodes(Chains);
+	TestEqual(TEXT("All 4 nodes covered"), CoveredNodes.Num(), 4);
+
+	// All 4 edges must be covered (no hash collisions causing edge loss)
+	TSet<int32> CoveredEdges = CollectAllChainEdges(Chains);
+	TestEqual(TEXT("All 4 edges covered"), CoveredEdges.Num(), 4);
+
+	TestTrue(TEXT("Endpoints at breakpoints"), AllEndpointsAtBreakpoints(Chains, Cluster, *Breakpoints));
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FPCGExChainBreakpointClosedLoopAllMediumTest,
+	"PCGEx.Unit.Clusters.Chain.Breakpoint.ClosedLoop.AllMedium",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+
+bool FPCGExChainBreakpointClosedLoopAllMediumTest::RunTest(const FString& Parameters)
+{
+	using namespace PCGExTest;
+
+	// 8-node closed loop with breakpoints at ALL nodes
+	TSharedRef<FTestCluster> Cluster = FClusterBuilder()
+		.WithClosedLoop(8)
+		.Build();
+
+	TSharedPtr<TArray<int8>> Breakpoints = MakeShared<TArray<int8>>();
+	Breakpoints->Init(0, 8);
+	for (int32 i = 0; i < 8; i++) { (*Breakpoints)[i] = 1; }
+
+	TArray<TSharedPtr<FTestChain>> Chains;
+	const bool bBuilt = TestChainHelpers::BuildChains(Cluster, Chains, Breakpoints);
+
+	TestTrue(TEXT("Chains built successfully"), bBuilt);
+	TestEqual(TEXT("8 chains"), Chains.Num(), 8);
+	TestEqual(TEXT("8 single-edge chains"), TestChainHelpers::CountSingleEdgeChains(Chains), 8);
+
+	TSet<int32> CoveredNodes = CollectAllChainNodes(Chains);
+	TestEqual(TEXT("All 8 nodes covered"), CoveredNodes.Num(), 8);
+
+	TSet<int32> CoveredEdges = CollectAllChainEdges(Chains);
+	TestEqual(TEXT("All 8 edges covered"), CoveredEdges.Num(), 8);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FPCGExChainBreakpointClosedLoopTriangleTest,
+	"PCGEx.Unit.Clusters.Chain.Breakpoint.ClosedLoop.Triangle",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+
+bool FPCGExChainBreakpointClosedLoopTriangleTest::RunTest(const FString& Parameters)
+{
+	using namespace PCGExTest;
+
+	// Minimal closed loop: 3-node triangle with breakpoints at all nodes
+	TSharedRef<FTestCluster> Cluster = FClusterBuilder()
+		.WithClosedLoop(3)
+		.Build();
+
+	TSharedPtr<TArray<int8>> Breakpoints = MakeShared<TArray<int8>>();
+	Breakpoints->Init(0, 3);
+	(*Breakpoints)[0] = 1;
+	(*Breakpoints)[1] = 1;
+	(*Breakpoints)[2] = 1;
+
+	TArray<TSharedPtr<FTestChain>> Chains;
+	const bool bBuilt = TestChainHelpers::BuildChains(Cluster, Chains, Breakpoints);
+
+	TestTrue(TEXT("Chains built successfully"), bBuilt);
+	TestEqual(TEXT("3 chains"), Chains.Num(), 3);
+	TestEqual(TEXT("3 single-edge chains"), TestChainHelpers::CountSingleEdgeChains(Chains), 3);
+
+	TSet<int32> CoveredEdges = CollectAllChainEdges(Chains);
+	TestEqual(TEXT("All 3 edges covered"), CoveredEdges.Num(), 3);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FPCGExChainBreakpointClosedLoopAdjacentTest,
+	"PCGEx.Unit.Clusters.Chain.Breakpoint.ClosedLoop.Adjacent",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+
+bool FPCGExChainBreakpointClosedLoopAdjacentTest::RunTest(const FString& Parameters)
+{
+	using namespace PCGExTest;
+
+	// 6-node loop with adjacent breakpoints at nodes 2 and 3
+	TSharedRef<FTestCluster> Cluster = FClusterBuilder()
+		.WithClosedLoop(6)
+		.Build();
+
+	TSharedPtr<TArray<int8>> Breakpoints = MakeShared<TArray<int8>>();
+	Breakpoints->Init(0, 6);
+	(*Breakpoints)[2] = 1;
+	(*Breakpoints)[3] = 1;
+
+	TArray<TSharedPtr<FTestChain>> Chains;
+	const bool bBuilt = TestChainHelpers::BuildChains(Cluster, Chains, Breakpoints);
+
+	TestTrue(TEXT("Chains built successfully"), bBuilt);
+
+	// Adjacent breakpoints should produce 2 chains: one with 1 link (2→3), one with 5 links
+	TestEqual(TEXT("2 chains"), Chains.Num(), 2);
+	TestEqual(TEXT("1 single-edge chain"), TestChainHelpers::CountSingleEdgeChains(Chains), 1);
+
+	TSet<int32> CoveredNodes = CollectAllChainNodes(Chains);
+	TestEqual(TEXT("All 6 nodes covered"), CoveredNodes.Num(), 6);
+
+	TSet<int32> CoveredEdges = CollectAllChainEdges(Chains);
+	TestEqual(TEXT("All 6 edges covered"), CoveredEdges.Num(), 6);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FPCGExChainBreakpointClosedLoopNoBreakpointsTest,
+	"PCGEx.Unit.Clusters.Chain.Breakpoint.ClosedLoop.NoBreakpoints",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+
+bool FPCGExChainBreakpointClosedLoopNoBreakpointsTest::RunTest(const FString& Parameters)
+{
+	using namespace PCGExTest;
+
+	// 6-node loop with breakpoints array present but empty (no actual breakpoints)
+	// Should pass through unchanged as a closed loop
+	TSharedRef<FTestCluster> Cluster = FClusterBuilder()
+		.WithClosedLoop(6)
+		.Build();
+
+	TSharedPtr<TArray<int8>> Breakpoints = MakeShared<TArray<int8>>();
+	Breakpoints->Init(0, 6); // All zeros
+
+	TArray<TSharedPtr<FTestChain>> Chains;
+	const bool bBuilt = TestChainHelpers::BuildChains(Cluster, Chains, Breakpoints);
+
+	TestTrue(TEXT("Chains built successfully"), bBuilt);
+	TestEqual(TEXT("1 chain (unchanged loop)"), Chains.Num(), 1);
+	TestEqual(TEXT("1 closed loop"), TestChainHelpers::CountClosedLoops(Chains), 1);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FPCGExChainBreakpointClosedLoopEvenlySpacedTest,
+	"PCGEx.Unit.Clusters.Chain.Breakpoint.ClosedLoop.EvenlySpaced",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+
+bool FPCGExChainBreakpointClosedLoopEvenlySpacedTest::RunTest(const FString& Parameters)
+{
+	using namespace PCGExTest;
+
+	// 20-node loop with breakpoints at 0, 5, 10, 15 (the real-world scenario)
+	TSharedRef<FTestCluster> Cluster = FClusterBuilder()
+		.WithClosedLoop(20)
+		.Build();
+
+	TSharedPtr<TArray<int8>> Breakpoints = MakeShared<TArray<int8>>();
+	Breakpoints->Init(0, 20);
+	(*Breakpoints)[0] = 1;
+	(*Breakpoints)[5] = 1;
+	(*Breakpoints)[10] = 1;
+	(*Breakpoints)[15] = 1;
+
+	TArray<TSharedPtr<FTestChain>> Chains;
+	const bool bBuilt = TestChainHelpers::BuildChains(Cluster, Chains, Breakpoints);
+
+	TestTrue(TEXT("Chains built successfully"), bBuilt);
+	TestEqual(TEXT("4 chains from 4 breakpoints"), Chains.Num(), 4);
+	TestEqual(TEXT("0 closed loops"), TestChainHelpers::CountClosedLoops(Chains), 0);
+
+	// All 20 nodes and 20 edges must be covered
+	TSet<int32> CoveredNodes = CollectAllChainNodes(Chains);
+	TestEqual(TEXT("All 20 nodes covered"), CoveredNodes.Num(), 20);
+
+	TSet<int32> CoveredEdges = CollectAllChainEdges(Chains);
+	TestEqual(TEXT("All 20 edges covered"), CoveredEdges.Num(), 20);
+
+	TestTrue(TEXT("Endpoints at breakpoints"), AllEndpointsAtBreakpoints(Chains, Cluster, *Breakpoints));
+
+	// Each chain should have 5 links (5 nodes between breakpoints)
+	for (int32 i = 0; i < Chains.Num(); i++)
+	{
+		TestEqual(FString::Printf(TEXT("Chain %d has 5 links"), i), Chains[i]->Links.Num(), 5);
+	}
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FPCGExChainBreakpointClosedLoopUniqueHashTest,
+	"PCGEx.Unit.Clusters.Chain.Breakpoint.ClosedLoop.UniqueHash",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+
+bool FPCGExChainBreakpointClosedLoopUniqueHashTest::RunTest(const FString& Parameters)
+{
+	using namespace PCGExTest;
+
+	// Verify that all chains from a broken closed loop have distinct hashes.
+	// This catches the bug where wrong seed edges caused hash collisions.
+	TSharedRef<FTestCluster> Cluster = FClusterBuilder()
+		.WithClosedLoop(4)
+		.Build();
+
+	TSharedPtr<TArray<int8>> Breakpoints = MakeShared<TArray<int8>>();
+	Breakpoints->Init(0, 4);
+	for (int32 i = 0; i < 4; i++) { (*Breakpoints)[i] = 1; }
+
+	TArray<TSharedPtr<FTestChain>> Chains;
+	TestChainHelpers::BuildChains(Cluster, Chains, Breakpoints);
+
+	TSet<uint64> UniqueHashes;
+	for (const TSharedPtr<FTestChain>& Chain : Chains)
+	{
+		bool bAlreadySet = false;
+		UniqueHashes.Add(Chain->UniqueHash, &bAlreadySet);
+		TestFalse(TEXT("Hash must be unique across chains"), bAlreadySet);
+	}
+
+	TestEqual(TEXT("All hashes unique"), UniqueHashes.Num(), Chains.Num());
 
 	return true;
 }
